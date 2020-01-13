@@ -36,7 +36,7 @@
     the ratio is around 52-54%, for most text files.
 
   - The decompression is lightning fast.
-    It could even exceed memory throughput,
+    It could even exceed memory throughput, (memory beeing the bottleneck)
     since on average only 55% of the decompressed data are to be read, 
     the decompression consists of (~)three lines of code(!),
     (the instructions might fit into a single cacheline)
