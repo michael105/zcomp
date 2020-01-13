@@ -2,7 +2,7 @@
 =======
 
 ```
- Implementation of a losless compression algorithm,
+ Demonstrational implementation of a losless compression algorithm,
  especially suitable for text files.
  Or other files, as long as the chars are mostly < ASCII 128
  What is the fact for most text files.
