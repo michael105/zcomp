@@ -55,8 +55,8 @@
  		cat file.txt | ./comp.pl > file.z
 
 file (meaning blocksize) shouldn't exceed much more than, say, 128kB.
-I experimented a bit with the algorithm,
-blocksizes > 64kB give rarely better results in the compression ratio,
+In experiments with the algorithm,
+blocksizes > 64kB showed rarely better results in the compression ratio,
 strangely the ratio in most cases gets worse and around 55-60%,
 but do need asymmetrically more resources when compressing.
 (Still within resonable limits, but there simply isn't enough gain)
