@@ -1,7 +1,7 @@
  ZCOMP
 =======
 
-
+```
  Implementation of a compression algorithm,
  especially suitable for text files.
  Or other files, as long as the chars are mostly < ASCII 128
@@ -12,6 +12,7 @@
  and update the tuples dictionary while compressing.
  However, other compression algorithms still give better results
  in terms of compression ratio and compression speed.
+```
 
  The advantages of this specialized algorithm are here:
 
@@ -35,7 +36,8 @@
     decompressed.
 	
 
- usage: cat file.txt | ./comp.pl > file.z
+ usage: 
+ 		cat file.txt | ./comp.pl > file.z
 
 file shouldn't exceed much more than, say, 128kB.
 I experimented a bit with the algorithm,
