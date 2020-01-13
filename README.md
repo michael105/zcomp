@@ -2,16 +2,31 @@
 =======
 
 ```
- Demonstrational implementation of a losless compression algorithm,
+ Demonstrational implementation of a losless (DE)compression algorithm,
  especially suitable for text files.
  Or other files, as long as the chars are mostly < ASCII 128
  What is given for most text files.
- The compression is not so fast, 
+ The compression is not that fast, 
  I have implemented optimized versions in C,
  which do count adjacent bytes (tuples) only once,
  and update the tuples dictionary while compressing.
  However, other compression algorithms still give better results
  in terms of compression ratio and compression speed.
+
+ The good side of this algorithm is the decompression side.
+
+ The simplest implementation given:
+```
+```perl
+ sub decomp{
+    for (0..length($_[0])){
+        if ((our $o=ord(our $c=substr($_[0],$_,1)))<129 ){
+            $_[1].=$c;
+        } else {
+            decomp( $ct[$o-129],$_[1] );
+        }
+    }
+  }
 ```
 
  The advantages of this specialized algorithm are here:
