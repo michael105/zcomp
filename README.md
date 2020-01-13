@@ -36,16 +36,16 @@
     the ratio is around 52-54%, for most text files.
 
   - The decompression is lightning fast.
-    It can even exceed the memory throughput,
+    It could even exceed memory throughput,
     since on average only 55% of the decompressed data are to be read, 
     the decompression consists of (~)three lines of code(!),
-    (the instrcutions might fit into a single cacheline)
+    (the instructions might fit into a single cacheline)
     and the dictionary used for decompression is at 254Bytes,
     fitting into (at least) the L1 Cache.
 
-  - So this might be of good choice for harddisk compression 
-    (e.g. the root file system, which is seldom written to,
-    but mainly read from), or for embedded targets
+  - So this might be suitable for embedded targets, 
+		html/javascript compression (compress once with higher load, 
+		decompress often with low usage of resources)
 
   - The compressed files are searchable, without having them 
     decompressed.
