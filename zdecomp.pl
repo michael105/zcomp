@@ -18,20 +18,20 @@ my @ct;
 # but this sourcefile gets easier to read
 # and understand
 for($a=0; $a <=252; $a+=2 ){
-		push @ct, substr( $dt, $a, 2 );
+    push @ct, substr( $dt, $a, 2 );
 }
 
 
 # The recursive decompression function
 # args: in, out
 sub decomp{
-		for (0..length($_[0])){
-				if ((our $o=ord(our $c=substr($_[0],$_,1)))<129 ){
-						$_[1].=$c;
-				} else {
-						decomp( $ct[$o-129],$_[1] );
-				}
-		}
+    for (0..length($_[0])){
+        if ((our $o=ord(our $c=substr($_[0],$_,1)))<129 ){
+            $_[1].=$c;
+        } else {
+            decomp( $ct[$o-129],$_[1] );
+        }
+    }
 }
 
 
@@ -40,9 +40,9 @@ sub decomp{
 # It's even faster
 # Albite .. perlish ;)
 sub deco{
-	ord(our $c=substr($_[0],$_,1))<129 
-		and	$_[1].=$c or deco($ct[ord($c)-129],$_[1])
-			for (0..length($_[0]));
+  ord(our $c=substr($_[0],$_,1))<129 
+    and  $_[1].=$c or deco($ct[ord($c)-129],$_[1])
+      for (0..length($_[0]));
 }
 
 #
