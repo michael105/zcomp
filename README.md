@@ -95,4 +95,20 @@ memo:
      This algorithm might also be a good choice
      for a SIMD implementation
 
+..:o now I'm on this very problem again.
+Just give me a problem, I'm trying to solve it, 
+sparing sleep and. never mind.
+Ok. So, 64bit - the decompression dict needs 4 regular registers.
+When getting rid of this unlucky base128 encoding -
+8 bytes can be checked with regular instructions in one ( more exactly in 1/3 ) cycle, 
+whether one of the bytes is compressed. (checking for the 8th bit set. e.g. rax & 0x80808080.80808080  )
+for a, say, 50 % compression ratio, this means. ok, split the register, split again. this works in parallel. ah me. I'm going to bed now. EXCEEDING memory throughput might be,
+well, hard to manage. When counting a memory access of 8 Bytes with, say, 4 full cycles. What could be a realistic number. However, when virtual parallelization kicks in - It seems close to possible.
+
+
+Using SIMD, oh. 
+
+
+
+
 
