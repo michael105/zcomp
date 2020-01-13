@@ -54,4 +54,20 @@ of 127. Which still fits with a bit of fiddling into the redzone
 There would also be the possibility to limit the recursion to, e.g., 64 or 32;
 without having any real loss in the compression ratio.
 
+The decompression would work with streams,
+but for sake of more simplicity 
+here's a buffered version
+It's only a presentational implementation anyways
+An optimized version lives within the C source files.
+It also hurts having the odd number 129
+I can hardly stand this. It's also said,
+having lost the option for bit operation optimizations.
+But the conversion within perl from text to the "base128"
+encoding is quite easier, than doing something else.
+So, I leave this at it is.
 
+memo: most possibly it would be mobe more performant
+     decompressing the dict partially, so at least ints (32bits)
+     can be written at once.
+     This algorithm might also be a good choice
+     for SIMD instructions
