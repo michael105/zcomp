@@ -2,7 +2,7 @@
 =======
 
 ```
- Implementation of a compression algorithm,
+ Implementation of a losless compression algorithm,
  especially suitable for text files.
  Or other files, as long as the chars are mostly < ASCII 128
  What is the fact for most text files.
@@ -49,9 +49,9 @@ The decompression, however, stays constant in terms of complexity and memory usa
 at O(1). 
 The memory usage needs 254 Bytes for the dict, + the stack for the recursive
 decompression function. The recursion, however, is (in the "worst" case) at a max
-of 127. Which still fit with a bit of fiddling into the redzone 
+of 127. Which still fits with a bit of fiddling into the redzone 
 (the zone, which gcc keeps free on the stack, usable by leaf functions).
-There's also the possibility to limit the recursion to, e.g., 64 or 32;
-without having any real loss.
+There would also be the possibility to limit the recursion to, e.g., 64 or 32;
+without having any real loss in the compression ratio.
 
 
