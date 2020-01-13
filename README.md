@@ -42,7 +42,7 @@
 file shouldn't exceed much more than, say, 128kB.
 I experimented a bit with the algorithm,
 blocksizes > 64kB give rarely better results in the compression ratio,
-but do need exponentially more resources when compressing.
+but do need asymmetrically more resources when compressing.
 (Still within resonable limits, but there simply isn't enough gain)
 
 The decompression, however, stays constant in terms of complexity and memory usage,
