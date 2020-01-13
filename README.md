@@ -63,7 +63,7 @@ The decompression would work with streams,
 but for the sake of simplicity 
 here's a buffered version
 It's only a presentational implementation anyways.
-An optimized version lives within the C source files.
+A more optimized version (work in progress) lives within the C source files.
 It also hurts having the odd number 129
 I can hardly stand this. It's also said,
 having lost the option for bit operation optimizations.
