@@ -22,8 +22,8 @@
 
   - The decompression is lightning fast.
     It can even exceed the memory throughput,
-    since in the medium only 50% of the decompressed data are to be read, 
-    the decompression consist of three lines of code(!),
+    since on average only 50% of the decompressed data are to be read, 
+    the decompression consist of (~)three lines of code(!),
     (the instrcutions might fit into a single cacheline)
     and the dictionary used for decompression is at 254Bytes,
     fitting into (at least) the L1 Cache.
