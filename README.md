@@ -66,8 +66,11 @@ But the conversion within perl from text to the "base128"
 encoding is quite easier, than doing something else.
 So, I leave this at it is.
 
-memo: most possibly it would be mobe more performant
+memo: 
+     most possibly it would be more performant
      decompressing the dict partially, so at least ints (32bits)
      can be written at once.
      This algorithm might also be a good choice
-     for SIMD instructions
+     for a SIMD implementation
+
+
