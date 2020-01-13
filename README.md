@@ -43,11 +43,11 @@
     and the dictionary used for decompression is at 254Bytes,
     fitting into (at least) the L1 Cache.
 
-  - So this might be suitable for embedded targets, 
+  - So this might be a good choice for embedded targets or
 		html/javascript compression (compress once with higher load, 
 		decompress often with low usage of resources)
 
-  - The compressed files are searchable, without having them 
+  - The compressed files are searchable, without having to be 
     decompressed.
 	
 
