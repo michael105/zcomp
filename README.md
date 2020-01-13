@@ -1,6 +1,9 @@
  ZCOMP
 =======
 
+(warning - I checked the perl implementations. Seem to work. <br>
+The c implementations I didn't recheck yet, they are just a snapshot of an ongoing work.)
+
 ```
  Demonstrational implementation of a losless (DE)compression algorithm,
  especially suitable for text files.
