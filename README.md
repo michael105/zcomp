@@ -1,6 +1,5 @@
-=====
-ZCOMP
-=====
+ ZCOMP
+=======
 
 
  Implementation of a compression algorithm,
