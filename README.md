@@ -39,12 +39,14 @@
  usage: 
  		cat file.txt | ./comp.pl > file.z
 
-file shouldn't exceed much more than, say, 128kB.
+file (meaning blocksize) shouldn't exceed much more than, say, 128kB.
 I experimented a bit with the algorithm,
 blocksizes > 64kB give rarely better results in the compression ratio,
 strangely the ratio in most cases gets worse and around 55-60%,
 but do need asymmetrically more resources when compressing.
 (Still within resonable limits, but there simply isn't enough gain)
+So, when experimenting, you might want to split input files before compressing.
+Or edit the source.
 
 The decompression, however, stays constant in terms of complexity and memory usage,
 at O(1). 
