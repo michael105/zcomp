@@ -41,9 +41,11 @@
     the decompression consists of (~)three lines of code(!),
     (the instructions might fit into a single cacheline)
     and the dictionary used for decompression is at 254Bytes,
-    fitting into (at least) the L1 Cache.
+    fitting into (at least) the L1 Cache. (I'd like to claim 
+		the fastest decompression algorithm available. Ok. Not the perl
+		version. But one of the C/Assembly implementations)
 
-  - So this might be a good choice for embedded targets or
+  - this might be a good choice for embedded targets or
 		html/javascript compression (compress once with higher load, 
 		decompress often with low usage of resources)
 
