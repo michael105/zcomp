@@ -1,0 +1,14 @@
+
+zz2cat:
+	small (377Bytes)
+
+cat2zz:
+	faster than cat2zz2, faster than comp4 
+	might rename this to zcomp
+	(doesn't read/write from stdin/out)
+
+
+tmp/decomp*.c : optimized decomp versions.
+
+
+
