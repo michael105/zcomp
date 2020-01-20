@@ -160,24 +160,33 @@ void decomp( const unsigned char data){
 				}
 }
 
+// Max block size
+#define LEN 120000
 
 int main(){
 		// "buffer"
-	 	unsigned char data;
+	 	unsigned char data[LEN];
+	 	unsigned char buf[LEN];
 
 		// read the decompression table.
 		// no error handling.
-		read( STDIN_FILENO, (POINTER*)&data, 1 ); // len of dictionary / 2
-		read( STDIN_FILENO, (POINTER*)ct, data*2 ); // read dict
-		
+	
 		// decompress, byte by byte. 
 		// It's not very effective.
 		// Especially cause every decompressed byte is written byte by byte to stdout, unbuffered.
 		// On the other hand, this rectifies the claim of being the smallest decompressor executable
 		// available. ( 309 Bytes, regular elf, amd64, compiled and statically linked to minilib
 		// with the standard gcc toolchain )
-		while ( read( STDIN_FILENO, (POINTER*)&data, 1 ))
-						decomp( data );
+		int len;
+
+		while ( read( STDIN_FILENO, (POINTER*)&len, 4 ) && len ){
+						read( STDIN_FILENO, (POINTER*)&data[0], 1 ); // len of dictionary / 2
+						read( STDIN_FILENO, (POINTER*)ct, data[0]*2 ); // read dict
+						read( STDIN_FILENO, (POINTER*)data, len ); // read data
+						for ( int a = 0; a<len; a++ )
+								decomp( data[a] );
+		}
+
 
 		return(0);
 }
