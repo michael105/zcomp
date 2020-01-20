@@ -22,7 +22,10 @@ return
 // Max. Block size
 // Better keep below caches sizes,
 // so the dict ant this prog fit still in.
-#define BUF 120000
+// I experimented quite a bit - 60000
+// seems to work best here (amd turion)
+// but this might be cpu/architecture specific
+#define BUF 60000
 
 int comp( unsigned char* data, int len, int fd ){
 
