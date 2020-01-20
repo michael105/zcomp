@@ -15,14 +15,12 @@ shrinkelf
 return
 #endif
 
-
-// This is a minimal implementation of z2
-
-// Buf 1 MB
-//#define BUF 0x100000
-// 64kB seems to be a good compromise
-// Better keep below 64kB, so eventually
-// the buf fits into (L1) cache, including this binary
+// Max. Block size
+// Better keep below caches sizes,
+// so the dict ant this prog fit still in.
+// I experimented quite a bit - 60000
+// seems to work best here (amd turion)
+// but this might be cpu/architecture specific
 #define BUF 60000
 
 int comp( unsigned char* data, int len, int fd ){
@@ -95,8 +93,8 @@ int comp( unsigned char* data, int len, int fd ){
 
 										if ( (ushort)k[data[p]][data[p+1]]  > 0 )
 												(ushort)k[data[p]][data[p+1]] --;
-										else
-												fprints(stderr, "XXX !!\n");
+										//else
+											//	fprints(stderr, "XXX !!\n");
 
 										//if ( (ushort)k[chr][data[p+1]] < (ushort)((ushort)0-1) )  // not needed for buf<64kB
 												(ushort)k[chr][data[p+1]]++;
@@ -122,7 +120,8 @@ int comp( unsigned char* data, int len, int fd ){
 
 		chr-=128;
 	 //	write( fd, "\xc2", 1 );
-		write( fd, &chr, 1 );
+		write( fd, &len, 4 );
+		write( fd, &chr, 1 ); // len of table
 		write( fd, (char*)ct, chr*2 ); 
 
 		write( fd, data, len );
