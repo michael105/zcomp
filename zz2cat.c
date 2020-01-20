@@ -2,6 +2,10 @@
 mini_read
 mini_write
 mini_start
+#mini_fprintf
+#mini_itodec
+#mini_itohex
+#mini_buf 1024
 INCLUDESRC
 OPTFLAG -Os
 shrinkelf
@@ -151,17 +155,20 @@ return
 // the dictionary table.
 unsigned char ct[256];
 
-void decomp( const unsigned char data){
+uchar* decomp( const unsigned char data, uchar *pb){
 				if ( data & 0x80 ){
-						decomp( ct[(unsigned char)(data<<1)] );
-						decomp( ct[((unsigned char)(data<<1)+1)]  ); // this could be replaced by a loop. 
+						pb=decomp( ct[(unsigned char)(data<<1)],  pb );
+						pb=decomp( ct[((unsigned char)(data<<1)+1)], pb  ); // this could be replaced by a loop. 
 				} else {
-						write( STDOUT_FILENO, &data, 1 );
+						//write( STDOUT_FILENO, &data, 1 );
+						*pb = data;
+						pb++;
 				}
+				return(pb);
 }
 
 // Max block size
-#define LEN 120000
+#define LEN 60000
 
 int main(){
 		// "buffer"
@@ -183,8 +190,12 @@ int main(){
 						read( STDIN_FILENO, (POINTER*)&data[0], 1 ); // len of dictionary / 2
 						read( STDIN_FILENO, (POINTER*)ct, data[0]*2 ); // read dict
 						read( STDIN_FILENO, (POINTER*)data, len ); // read data
+						uchar *pb = buf;
 						for ( int a = 0; a<len; a++ )
-								decomp( data[a] );
+								pb=decomp( data[a], pb );
+						//fprintf(stderr,"buf: %x\n", buf );
+						//fprintf(stderr,"pb:  %d\n", pb - buf );
+						write( STDOUT_FILENO, (POINTER*)buf, pb-buf );
 		}
 
 
