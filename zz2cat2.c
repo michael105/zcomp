@@ -155,21 +155,21 @@ return
 // the dictionary table.
 unsigned char ct[256];
 
-uchar* decomp( const unsigned char* data, uchar *pb){
-				if ( data[0] & 0x80 ){
-						pb=decomp( &ct[(unsigned char)(data[0]<<1)],  pb );
+uchar* decomp( const unsigned short *data, uchar *pb){
+				if ( *data & 0x80 ){
+						pb=decomp( (short*)&ct[(unsigned char)((*data&0x7f)<<1)],  pb );
 						//pb=decomp( ct[((unsigned char)(data<<1)+1)], pb  ); // this could be replaced by a loop. 
 				} else {
 						//write( STDOUT_FILENO, &data, 1 );
-						*pb = data[0];
+						*pb = *data&0x7f;
 						pb++;
 				}
-				if ( data[1] & 0x80 ){
-						pb=decomp( &ct[(unsigned char)(data[1]<<1)],  pb );
+				if ( *data & 0x8000 ){
+						pb=decomp( (short*)&ct[(unsigned char)((*data>>8)<<1)],  pb );
 						//pb=decomp( ct[((unsigned char)(data<<1)+1)], pb  ); // this could be replaced by a loop. 
 				} else {
 						//write( STDOUT_FILENO, &data, 1 );
-						*pb = data[1];
+						*pb = *data>>8;
 						pb++;
 				}
 
@@ -203,10 +203,10 @@ int main(){
 						uchar *pb = buf;
 						int a;
 						for ( a = 0; a<len-1; a+=2 )
-								pb=decomp( &data[a], pb );
+								pb=decomp( (short*)&data[a], pb );
 						if ( len&1 ){
 								if ( data[a] & 0x80 ){
-										pb=decomp( &ct[(unsigned char)(data[a]<<1)],  pb );
+										pb=decomp( (short*)&ct[(unsigned char)(data[a]<<1)],  pb );
 								} else {
 										pb = data;
 										pb++;
