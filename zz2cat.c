@@ -7,7 +7,7 @@ mini_start
 #mini_itohex
 #mini_buf 1024
 INCLUDESRC
-OPTFLAG -Os
+OPTFLAG -O2
 shrinkelf
 LDSCRIPT text_and_bss
 
