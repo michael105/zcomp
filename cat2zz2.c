@@ -12,15 +12,15 @@ mini_write
 mini_start
 mini_errno
 INCLUDESRC
-OPTFLAG -Os
+OPTFLAG -O2
 shrinkelf
 
 
 return
 #endif
 
-// Buf 4 MB
-#define BUF 0x400000
+// Buf 
+#define BUF 60000
 
 int comp( unsigned char* data, int len, int fd ){
 
@@ -112,6 +112,7 @@ int comp( unsigned char* data, int len, int fd ){
 
 		uchar c = (chr-128);
 	 //	write( fd, "\xc2", 1 );
+		write( fd, &len, 4 );
 		write( fd, &c, 1 );
 		write( fd, (char*)ct, c*2 ); 
 
@@ -135,7 +136,7 @@ int main( int argc, char *argv[] ){
 		//FILE  *FOUT;
 		//FOUT  = fopen( argv[2], "w" );
 		int fdout;
-		fdout  = open( argv[2], O_WRONLY|O_CREAT|O_TRUNC );
+		fdout  = open( argv[2], O_WRONLY|O_CREAT|O_TRUNC, 0644 );
 		if ( fdout <=0 ){
 				fprints(stderr,"Error: Couldn't open "); fprints( stderr,argv[2] );fprints(stderr, "for writing\n" );
 		}

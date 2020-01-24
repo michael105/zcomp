@@ -152,7 +152,14 @@ return
 //
 // ->password feeder. (encrypted memory for comm.?)
 // 
+//
+// BUG in here.
+// I leave it. Better restart.
 
+typedef unsigned int uint;
+typedef unsigned short ushort;
+typedef unsigned long uint64_t;
+typedef unsigned int uint32_t;
 
 typedef struct {
 		union {
@@ -281,6 +288,106 @@ void z2unpack( z2block *z ){
 }
 #endif
 
+		unsigned char ct[256];
+int comp( unsigned char* data, int len ){// int fd ){
+
+		unsigned short int k[256][256];
+		unsigned char prev = 0xFF;
+
+		//memset( k, 0, 256*256 * sizeof(short int) );
+		for ( long *l = (long*)(k[0]); l<(long*)(k[255]+255);l++){
+				*l= 0; // set k to 0. l+1 means l=l+8 here. or which size a long has.
+		}
+
+		// count different pairs
+		// 'AAA' count as 1, 'AAAA' as 2
+		for ( int b = 0; b<len-1; b++ ){
+				unsigned char c1 = data[b];
+				int p = b+1;
+				if ( (c1 == prev) && ( prev == data[p]) ){
+						prev = 0xFF;
+				} else {
+						k[c1][data[p]] = k[c1][data[p]] + 1;
+						if ( c1 == data[p] )
+								prev = c1;
+						else
+								prev=0xff;
+				}
+		}
+
+		int saved = 3;
+		int chr;
+		for ( chr = 128; (chr<256) && (saved>2); chr++ ){
+
+				saved=0;
+				prev=0xff;
+				unsigned short int count = 0;
+
+				for ( int i1 =0; i1<chr; i1++ ){
+						for ( int i2 =0; i2<chr; i2++ ){
+								if ( (ushort)k[i1][i2] > (ushort)count ){
+										count = (ushort)k[i1][i2];
+										ct[(chr-128)*2] = i1;
+										ct[(chr-128)*2+1] = i2;
+								}
+						}
+				}
+				int p = 1;
+				int b = 0;
+				for ( b = 0; p<len; b++ ){
+						if ( (data[b] == ct[(chr-128)*2]) && ( data[p] == ct[(chr-128)*2+1] ) ){
+								if ( b>0 ){
+
+										if ( prev != chr ){
+												if ( (ushort)k[data[b-1]][chr] < (ushort)((ushort)0-1) )
+														(ushort)k[data[b-1]][chr]++;
+												prev=data[b-1];
+										} else {
+												prev=0xff;
+										}
+
+										if((ushort)k[data[b-1]][data[b]]>0)
+												(ushort)k[data[b-1]][data[b]]--;
+								}
+								if ( p < len ){
+
+										if ( (ushort)k[data[p]][data[p+1]]  > 0 )
+												(ushort)k[data[p]][data[p+1]] --;
+
+										if ( (ushort)k[chr][data[p+1]] < (ushort)((ushort)0-1) )
+												(ushort)k[chr][data[p+1]]++;
+								}
+
+								p++;
+								data[b] = chr;
+								saved++;
+						}
+						//if ( p>(b+1) )
+						data[b+1] = data[p]; // copy 
+						p++;
+				}
+
+				k[ct[(chr-128)*2]][ct[(chr-128)*2+1]] = 0;
+				len = len-saved;
+
+				//fprintf(stderr, "diff: %d\n", diff );
+				fprintf(stderr, "count: %d =  -%2X-%2X-\nsaved: %d\n\n*********\n", (ushort)count, ct[(chr-128)*2], ct[(chr-128)*2+1], saved);
+		}
+
+	//	chr--;
+
+		uchar c = (chr-128);
+	 //	write( fd, "\xc2", 1 );
+		//write( fd, &c, 1 );
+		//write( fd, (char*)ct, c*2 ); 
+
+	//	write( fd, data, len );
+
+		fprintf(stderr,"newlen: %d,chr: %X, table len(*2): %d\n", len,chr,c );
+		return(len);
+}
+
+
 uint zpack( zblock *z ){
 
 		unsigned short int k[256][256];
@@ -358,10 +465,11 @@ uint zpack( zblock *z ){
 								p++;
 								z->data[b] = chr;
 								saved++;
-						} else
+						} else {
 						//if ( p>(b+1) )
 						z->data[b+1] = z->data[p]; // copy 
 						p++;
+						}
 				}
 
 				k[z->ct[(chr-128)*2]][z->ct[(chr-128)*2+1]] = 0;
@@ -396,7 +504,7 @@ unsigned int zpackbuf( char *inbuf, unsigned int len, char *outbuf, unsigned int
 
 
 
-#define LEN 0xfffff
+#define LEN 60000
 
 #ifdef MLIB
 
@@ -420,13 +528,22 @@ int main( int argc, char *argv[] ){
 		for ( int a = 0; a<LEN/4; a++ ){
 				u.i[a] = rand();
 				for ( int b = 0; b<4; b++ ){
-						if ( u.c[a*4+b] > 127 )
-								u.c[a*4+b] = 88;
+						if ( u.c[a*4+b] > 106 )
+								u.c[a*4+b] = 32;
 				}
 				u2.i[a] = u.i[a];
 				//printf("a: %d  rand: %d\n",a, u.i[a] );
 		}
 		
+		for ( int a = 0; a<LEN; a++ ){
+				if ( z.data[a] != u2.c[a] ){
+						printf("a: %d  XXXX z.buf[a]: %d, u2.c[a]: %d \n",a, z.buf[a], u2.c[a] );
+						exit(1);
+				}
+
+		}
+
+
 
 		printf("len: %d\n", LEN);
 
@@ -453,9 +570,16 @@ int main( int argc, char *argv[] ){
 		endtsc( &t3 );
 		printf("Elapsed: %u   %u\n", t1.sum.t[1], t1.sum.t[0] );
 		printf("Elapsed, getsum:\nt1 %u\nt2 %u\nt3 %u\nt4 %u\n", getsumtsci(&t1), getsumtsci(&t2),getsumtsci(&t3), getsumtsci(&t4) );
-		
 
-		int r = zpack( &z );
+		int  fd = open( "ti", O_CREAT | O_WRONLY, 0600 );
+		write(fd, z.data, z.len );
+		close(fd);
+		
+ 
+
+		int r = comp( z.data, z.len );
+		z.len = r;
+		//int r = zpack( &z );
 
 		printf("z->len: %d\n", z.len);
 
@@ -463,13 +587,25 @@ int main( int argc, char *argv[] ){
 		printf("Elapsed: %u   %u\n", t1.sum.t[1], t1.sum.t[0] );
 		printf("Elapsed, getsum: %u\n", getsumtsci(&t1) );
 
-		//unsigned char* c = z->buf;
-		//z->buf = z->data;
-		//z->data = z->buf;
-		//z->len = z->newlen;
+		//unsigned char* c = z.buf;
+		//z.buf = z.data;
+		//z.data = c;
+		//z.len = z.newlen;
+		fd = open( "to.z", O_CREAT | O_WRONLY, 0600 );
+
+		char cl = 128;
+		write(fd, &cl, 1 );
+		write(fd, (char*)ct, 256 );
+		write(fd, z.data, z.len );
+		close(fd);
 		
 		starttsc( &t1 );
 		zunpack(&z);
+
+		fd = open( "tii", O_CREAT | O_WRONLY, 0600 );
+		write(fd, z.buf, z.newlen );
+		close( fd );
+		
 		endtsc( &t1 );
 		printf("Len: %u\nNewlen: %u\nT: %u\n", z.len, z.newlen, getsumtsci(&t1) );
 

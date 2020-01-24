@@ -1,19 +1,18 @@
 #if 0
 # minilib config below
-mini_fprints
 mini_fwrites
-mini_buf 1024
-mini_open
 mini_read
 mini_write
 mini_start
 #mini_errno
 INCLUDESRC
-OPTFLAG -Os
+OPTFLAG -O2
 shrinkelf
 
 return
 #endif
+
+// faster than cat2zz2, with -O2 (segfault with O3)
 
 // Max. Block size
 // Better keep below caches sizes,
@@ -64,18 +63,18 @@ int comp( unsigned char* data, int len, int fd ){
 						for ( int i2 =0; i2<chr; i2++ ){
 								if ( (ushort)k[i1][i2] > (ushort)count ){
 										count = (ushort)k[i1][i2];
-										ct[(chr-128)*2] = i1;
-										//ct[(uchar)(chr<<1)] = i1;
-										//ct[(uchar)(chr<<1)+1] = i2;
-										ct[(chr-128)*2+1] = i2;
+										//ct[(chr-128)*2] = i1; // same as below, cause of overflow
+										ct[(uchar)(chr<<1)] = i1;
+										ct[(uchar)(chr<<1)+1] = i2;
+										//ct[(chr-128)*2+1] = i2;
 								}
 						}
 				}
 				int p = 1;
 				int b = 0;
 				for ( b = 0; p<len; b++ ){ // iterate over buf, replace pairs
-						if ( (data[b] == ct[(chr-128)*2]) && ( data[p] == ct[(chr-128)*2+1] ) ){ // found pair
-						//if ( (data[b] == ct[(uchar)(chr<<1)]) && ( data[p] == ct[(uchar)(chr<<1)+1] ) ){
+						//if ( (data[b] == ct[(chr-128)*2]) && ( data[p] == ct[(chr-128)*2+1] ) ){ // found pair
+						if ( (data[b] == ct[(uchar)(chr<<1)]) && ( data[p] == ct[(uchar)(chr<<1)+1] ) ){
 								if ( b>0 ){
 
 										if ( prev != chr ){
@@ -112,11 +111,8 @@ int comp( unsigned char* data, int len, int fd ){
 				k[ct[(chr-128)*2]][ct[(chr-128)*2+1]] = 0;
 				len = len-saved;
 
-				//fprintf(stderr, "diff: %d\n", diff );
-				//fprintf(stderr, "a: %X\ncount: %d =  -%2X-%2X-\nsaved: %d\n\n*********\n",a, (ushort)count, ct[(a-128)*2], ct[(a-128)*2+1], saved);
 		}
 
-	//	chr--;
 
 		chr-=128;
 	 //	write( fd, "\xc2", 1 );
@@ -125,7 +121,6 @@ int comp( unsigned char* data, int len, int fd ){
 		write( fd, (char*)ct, chr*2 ); 
 
 		write( fd, data, len );
-
 //		fprintf(stderr,"newlen: %d,chr: %X, table len(*2): %d\n", len,chr,c );
 		return(len);
 }
@@ -135,19 +130,7 @@ int main( int argc, char *argv[] ){
 		unsigned char in[BUF];
 		int r;
 
-		int fd = open( argv[1], O_RDONLY ); 
-		//int fdout = STDOUT_FILENO;
-
-		r = read( fd, (POINTER*)in, BUF );
-		//fprintf(stderr,"Got: %d\nerrno: %d\n", r, errno );
-
-		//FILE  *FOUT;
-		//FOUT  = fopen( argv[2], "w" );
-		int fdout;
-		fdout  = open( argv[2], O_WRONLY|O_CREAT|O_TRUNC, 0644 );
-		if ( fdout <=0 ){
-				fprints(stderr,"Error: Couldn't open "); fprints( stderr,argv[2] );fprints(stderr, "for writing\n" );
-		}
+		r = read( STDIN_FILENO, (POINTER*)in, BUF );
 
 		while (r>0) {
 				for ( int a=0; a<r; a++ ){
@@ -156,10 +139,9 @@ int main( int argc, char *argv[] ){
 								exit(1);
 						}
 				}
-				comp( in, r, fdout );
-				r = read( fd, (POINTER*)in, BUF );
+				comp( in, r, STDOUT_FILENO );
+				r = read( STDIN_FILENO, (POINTER*)in, BUF );
 		};
-		close(fdout);
 
 		return(0);
 }

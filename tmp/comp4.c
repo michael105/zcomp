@@ -20,7 +20,7 @@ return
 #endif
 
 // Buf 4 MB
-#define BUF 0x400000
+#define BUF 60000
 
 int comp( unsigned char* data, int len, int fd ){
 

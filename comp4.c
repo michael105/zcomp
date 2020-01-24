@@ -12,7 +12,7 @@ mini_write
 mini_start
 mini_errno
 INCLUDESRC
-OPTFLAG
+OPTFLAG -O2
 #shrinkelf
 
 
